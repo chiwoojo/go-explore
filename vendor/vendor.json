@@ -1,7 +1,7 @@
 {
     "rootPath": "fileserver",
     "heroku": {
-        "install" : [ "./..." ],
+        "install" : [ "../../..." ],
         "goVersion": "go1.8"
     }
 }
