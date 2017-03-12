@@ -1,7 +1,0 @@
-{
-    "rootPath": "fileserver",
-    "heroku": {
-        "install" : [ "github.com/russross/blackfriday" ],
-        "goVersion": "go1.8"
-    }
-}
