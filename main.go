@@ -1,24 +1,54 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
-	"os"
 
-	"github.com/russross/blackfriday"
+	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	r := httprouter.New()
+	r.GET("/", homeHandler)
 
-	http.HandleFunc("/markdown", generateMarkdown)
-	http.Handle("/", http.FileServer(http.Dir("public")))
-	http.ListenAndServe(":"+port, nil)
+	// Posts collection
+	r.GET("/posts", postsIndexHandler)
+	r.POST("/posts", postsCreateHandler)
+
+	// Posts singular
+	r.GET("/posts/:id", postShowHandler)
+	r.PUT("/posts/:id", postUpdateHandler)
+	r.GET("/posts/:id/edit", postEditHandler)
+
+	fmt.Println("Starting server on :8080")
+	http.ListenAndServe(":8080", r)
 }
 
-func generateMarkdown(rw http.ResponseWriter, r *http.Request) {
-	markdown := blackfriday.MarkdownCommon([]byte(r.FormValue("body")))
-	rw.Write(markdown)
+func homeHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprintln(rw, "Home")
+}
+
+func postsIndexHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprintln(rw, "posts index")
+}
+
+func postsCreateHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprintln(rw, "posts create")
+}
+
+func postShowHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	id := p.ByName("id")
+	fmt.Fprintln(rw, "showing post", id)
+}
+
+func postUpdateHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprintln(rw, "post update")
+}
+
+func postDeleteHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprintln(rw, "post delete")
+}
+
+func postEditHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprintln(rw, "post edit")
 }
