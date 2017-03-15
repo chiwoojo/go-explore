@@ -4,51 +4,23 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/codegangsta/negroni"
 	"github.com/julienschmidt/httprouter"
 )
 
 func main() {
-	r := httprouter.New()
-	r.GET("/", homeHandler)
-
-	// Posts collection
-	r.GET("/posts", postsIndexHandler)
-	r.POST("/posts", postsCreateHandler)
-
-	// Posts singular
-	r.GET("/posts/:id", postShowHandler)
-	r.PUT("/posts/:id", postUpdateHandler)
-	r.GET("/posts/:id/edit", postEditHandler)
-
-	fmt.Println("Starting server on :8080")
-	http.ListenAndServe(":8080", r)
+	router := httprouter.New()
+	router.GET("/", mainH)
+	router.GET("/s", handleS)
+	n := negroni.New(negroni.NewRecovery(), negroni.NewLogger())
+	n.UseHandler(router)
+	http.ListenAndServe(":8080", n)
 }
 
-func homeHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	fmt.Fprintln(rw, "Home")
+func handleS(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprint(rw, "Welcome!!")
 }
 
-func postsIndexHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	fmt.Fprintln(rw, "posts index")
-}
-
-func postsCreateHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	fmt.Fprintln(rw, "posts create")
-}
-
-func postShowHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	id := p.ByName("id")
-	fmt.Fprintln(rw, "showing post", id)
-}
-
-func postUpdateHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	fmt.Fprintln(rw, "post update")
-}
-
-func postDeleteHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	fmt.Fprintln(rw, "post delete")
-}
-
-func postEditHandler(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
-	fmt.Fprintln(rw, "post edit")
+func mainH(rw http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	fmt.Fprint(rw, "Welcome!")
 }
